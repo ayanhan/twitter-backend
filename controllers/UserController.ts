@@ -1,12 +1,10 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import { UserModel, UserModelInterface, UserModelDocumentInterface } from '../models/UserModel';
 import { generateMD5 } from '../utils/generateHash';
 import { sendEmail } from '../utils/sendEmail';
-
-const isValidObjectId = mongoose.Types.ObjectId.isValid;
+import { isValidObjectId } from '../utils/isValidObjectId';
 class UserController {
   async index(_: any, res: express.Response): Promise<void> {
     try {
@@ -78,7 +76,7 @@ class UserController {
           subject: 'Confirmation of email Twitter Clone Tutorial',
           html: `For confirm email follow the link <a href="http://localhost:${
             process.env.PORT || 8888
-          }/users/verify?hash=${data.confirmHash}">click</a>`,
+          }/auth/verify?hash=${data.confirmHash}">click</a>`,
         },
         (err: Error | null) => {
           if (err) {
