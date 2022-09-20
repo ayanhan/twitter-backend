@@ -31,7 +31,7 @@ class UserController {
         return;
       }
 
-      const user = await UserModel.findById(userId).exec();
+      const user = await UserModel.findById(userId).populate('tweets').exec();
 
       if (!user) {
         res.status(404).send();
@@ -117,7 +117,12 @@ class UserController {
 
         res.json({
           status: 'success',
-          data: user.toJSON(),
+          data: {
+            ...user.toJSON(),
+            token: jwt.sign({ data: user.toJSON() }, process.env.SECRET_KEY || '123', {
+              expiresIn: '30 days',
+            }),
+          },
         });
       } else {
         res.status(404).json({ status: 'error', message: 'User not found!' });
